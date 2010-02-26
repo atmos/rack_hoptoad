@@ -4,7 +4,8 @@ require 'spec/rake/spectask'
 require 'date'
 require 'bundler'
 
-Bundler.require_env
+Bundler.setup(:runtime, :test)
+Bundler.require(:runtime, :test)
 
 require 'lib/rack/hoptoad'
 
@@ -27,11 +28,10 @@ spec = Gem::Specification.new do |s|
   s.email            = EMAIL
   s.homepage         = HOMEPAGE
 
-  manifest = Bundler::Dsl.load_gemfile(File.dirname(__FILE__) + '/Gemfile')
-  manifest.dependencies.each do |d|
-    next unless d.only && d.only.include?('release')
-    s.add_dependency(d.name, d.version)
-  end
+  bundle = Bundler::Definition.from_gemfile("Gemfile")
+  bundle.dependencies.
+    select { |d| d.groups.include?(:runtime) }.
+    each   { |d| s.add_dependency(d.name, d.version_requirements.to_s)  }
 
   s.require_path = 'lib'
   s.files = %w(LICENSE README.md Rakefile TODO) + Dir.glob("{lib,specs}/**/*")
@@ -57,7 +57,7 @@ namespace :rack_hoptoad do
     t.spec_opts << '--loadby' << 'random'
     t.spec_files = Dir["spec/*_spec.rb"]
 
-    t.rcov_opts << '--exclude' << 'spec'
+    t.rcov_opts << '--exclude' << 'spec,.bundle'
     t.rcov = ENV.has_key?('NO_RCOV') ? ENV['NO_RCOV'] != 'true' : true
     t.rcov_opts << '--text-summary'
     t.rcov_opts << '--sort' << 'coverage' << '--sort-reverse'

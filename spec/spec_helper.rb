@@ -1,4 +1,7 @@
-Bundler.require_env(:test)
+require 'bundler'
+
+Bundler.setup(:runtime, :test)
+Bundler.require(:test)
 $:.push File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'rack/hoptoad'
