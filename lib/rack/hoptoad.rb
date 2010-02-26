@@ -49,7 +49,7 @@ module Rack
       options = {
         :api_key           => api_key,
         :url               => "#{request.scheme}://#{request.host}#{request.path}",
-        :request           => request,
+        :params            => request.params,
         :framework_env     => rack_env,
         :notifier_name     => 'Rack::Hoptoad',
         :notifier_version  => VERSION,
@@ -65,7 +65,7 @@ module Rack
     end
 
     def toadhopper
-      toad         = ToadHopper(api_key)
+      toad         = Toadhopper(api_key)
       toad.filters = environment_filter_keys
       toad
     end

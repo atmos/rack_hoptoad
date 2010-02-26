@@ -1,6 +1,6 @@
 only :release do
   gem 'rack'
-  gem 'toadhopper', '~>0.9.4'
+  gem 'toadhopper', '~>1.0.0'
 end
 
 only :test do
