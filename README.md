@@ -35,6 +35,15 @@ Installation
 
     % sudo gem install rack_hoptoad
 
+Testing
+=======
+
+You need bundler 0.9.12 installed
+
+    % sudo gem install bundler
+    % bundle install
+    % MY_HOPTOAD_API_KEY=XXXXX bundle exec rake
+
 Sinatra Notes
 =============
 
