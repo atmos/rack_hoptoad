@@ -14,5 +14,5 @@ group :test do
     gem 'ruby-debug'
   end
   gem 'rcov'
-  gem 'bundler',   '>0.7.2'
+  gem 'bundler',   '~>0.9.12'
 end
