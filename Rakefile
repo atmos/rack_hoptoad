@@ -57,7 +57,7 @@ namespace :rack_hoptoad do
     t.spec_opts << '--loadby' << 'random'
     t.spec_files = Dir["spec/*_spec.rb"]
 
-    t.rcov_opts << '--exclude' << 'spec,.bundle'
+    t.rcov_opts << '--exclude' << 'spec,.bundle,.rvm'
     t.rcov = ENV.has_key?('NO_RCOV') ? ENV['NO_RCOV'] != 'true' : true
     t.rcov_opts << '--text-summary'
     t.rcov_opts << '--sort' << 'coverage' << '--sort-reverse'

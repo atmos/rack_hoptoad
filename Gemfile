@@ -2,7 +2,7 @@ source :gemcutter
 
 group :runtime do
   gem 'rack'
-  gem 'toadhopper', '~>1.0.0'
+  gem 'toadhopper', '~>1.0.1'
 end
 
 group :test do
