@@ -8,7 +8,7 @@ module Rack
   class Hoptoad
     VERSION = '0.1.4.a'
 
-    attr_accessor :api_key, :environment_filters, :report_under, :rack_environment
+    attr_accessor :api_key, :environment_filters, :report_under, :rack_environment, :notifier_class, :failsafe
 
     def initialize(app, api_key = nil, rack_environment = 'RACK_ENV')
       @app                 = app
@@ -16,6 +16,8 @@ module Rack
       @report_under        = %w(staging production)
       @rack_environment    = rack_environment
       @environment_filters = %w(AWS_ACCESS_KEY  AWS_SECRET_ACCESS_KEY AWS_ACCOUNT SSH_AUTH_SOCK)
+      @notifier_class      = Toadhopper
+      @failsafe            = $stderr
       yield self if block_given?
     end
 
@@ -24,8 +26,6 @@ module Rack
         begin
           @app.call(env)
         rescue StandardError, LoadError, SyntaxError => boom
-          # TODO don't allow exceptions from send_notification to
-          # propogate
           notified = send_notification boom, env
           env['hoptoad.notified'] = notified
           raise
@@ -58,6 +58,12 @@ module Rack
 
       result = toadhopper.post!(exception, options, {'X-Hoptoad-Client-Name' => 'Rack::Hoptoad'})
       result.errors.empty?
+    rescue Exception => e
+      return unless @failsafe
+      @failsafe.puts "Fail safe error caught: #{e.class}: #{e.message}"
+      @failsafe.puts e.backtrace
+      @failsafe.puts "Exception is #{exception.class}: #{exception.message}"
+      @failsafe.puts exception.backtrace
     end
 
     def rack_env
@@ -65,7 +71,7 @@ module Rack
     end
 
     def toadhopper
-      toad         = Toadhopper(api_key)
+      toad         = @notifier_class.new(api_key)
       toad.filters = environment_filter_keys
       toad
     end
