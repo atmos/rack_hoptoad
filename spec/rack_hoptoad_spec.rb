@@ -8,6 +8,12 @@ class FailHopper < Toadhopper
   end
 end
 
+class ErroringHopper < Toadhopper
+  def post!(*)
+    Toadhopper::Response.new(500, "", ["Timeout"])
+  end
+end
+
 describe 'Rack::Hoptoad' do
   let(:app)     { lambda { |env| raise TestError, 'Suffering Succotash!' } }
   let(:env)     { Rack::MockRequest.env_for("/foo?q=google", 'FOO' => 'BAR', :method => 'GET', :input => 'THE BODY') }
@@ -65,7 +71,28 @@ describe 'Rack::Hoptoad' do
         end
 
       lambda { notifier.call(env) }.should raise_error(TestError)
+      env['hoptoad.notified'].should eql(false)
       failsafe.string.should include("Fail safe error caught")
+      failsafe.string.should include("No response from Toadhopper")
+    end
+  end
+
+  describe "when hoptoad returns an error" do
+    before { ENV['RACK_ENV'] = 'production' }
+    it 'outputs the errors' do
+      failsafe = StringIO.new
+
+      notifier =
+        Rack::Hoptoad.new(app, api_key) do |middleware|
+          middleware.environment_filters << 'MY_HOPTOAD_API_KEY'
+          middleware.notifier_class = ErroringHopper
+          middleware.failsafe       = failsafe
+        end
+
+      lambda { notifier.call(env) }.should raise_error(TestError)
+      env['hoptoad.notified'].should eql(false)
+      failsafe.string.should include("Fail safe error caught: Rack::Hoptoad::Error")
+      failsafe.string.should include('Status: 500 ["Timeout"]')
     end
   end
 end

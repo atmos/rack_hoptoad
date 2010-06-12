@@ -8,6 +8,8 @@ module Rack
   class Hoptoad
     VERSION = '0.1.4.a'
 
+    class Error < StandardError; end
+
     attr_accessor :api_key, :environment_filters, :report_under, :rack_environment, :notifier_class, :failsafe
 
     def initialize(app, api_key = nil, rack_environment = 'RACK_ENV')
@@ -56,14 +58,22 @@ module Rack
         :session           => env['rack.session']
       }
 
-      result = toadhopper.post!(exception, options, {'X-Hoptoad-Client-Name' => 'Rack::Hoptoad'})
-      result.errors.empty?
+      if result = toadhopper.post!(exception, options, {'X-Hoptoad-Client-Name' => 'Rack::Hoptoad'})
+        if result.errors.empty?
+          true
+        else
+          raise Error, "Status: #{result.status} #{result.errors.inspect}"
+        end
+      else
+        raise Error, "No response from Toadhopper"
+      end
     rescue Exception => e
       return unless @failsafe
       @failsafe.puts "Fail safe error caught: #{e.class}: #{e.message}"
       @failsafe.puts e.backtrace
       @failsafe.puts "Exception is #{exception.class}: #{exception.message}"
       @failsafe.puts exception.backtrace
+      false
     end
 
     def rack_env
