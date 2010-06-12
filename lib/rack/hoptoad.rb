@@ -6,7 +6,7 @@ module Rack
   # Catches all exceptions raised from the app it wraps and
   # posts the results to hoptoad.
   class Hoptoad
-    VERSION = '0.1.3'
+    VERSION = '0.1.4.a'
 
     attr_accessor :api_key, :environment_filters, :report_under, :rack_environment
 
