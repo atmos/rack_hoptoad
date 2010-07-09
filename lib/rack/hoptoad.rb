@@ -6,7 +6,7 @@ module Rack
   # Catches all exceptions raised from the app it wraps and
   # posts the results to hoptoad.
   class Hoptoad
-    VERSION = '0.1.5'
+    VERSION = '0.1.6'
 
     class Error < StandardError; end
 
