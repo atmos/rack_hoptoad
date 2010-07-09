@@ -39,6 +39,12 @@ module Rack
     def environment_filter_keys
       @environment_filters.flatten
     end
+
+    def environment_filter_regexps
+      environment_filter_keys.map do |key|
+        "^#{Regexp.escape(wrapped_key_for(key))}$"
+      end
+    end
   private
     def report?
       report_under.include?(rack_env)
@@ -55,6 +61,7 @@ module Rack
         :framework_env     => rack_env,
         :notifier_name     => 'Rack::Hoptoad',
         :notifier_version  => VERSION,
+        :environment       => environment_data_for(env),
         :session           => env['rack.session']
       }
 
@@ -82,8 +89,23 @@ module Rack
 
     def toadhopper
       toad         = @notifier_class.new(api_key)
-      toad.filters = environment_filter_keys
+      toad.filters = environment_filter_regexps
       toad
+    end
+
+    def environment_data_for(env)
+      data = {}
+      ENV.each do |key,value|
+        data[wrapped_key_for(key)] = value.inspect
+      end
+      env.each do |key,value|
+        data["rack[#{key.inspect}]"] = value.inspect
+      end
+      data
+    end
+
+    def wrapped_key_for(key)
+      "ENV[#{key.inspect}]"
     end
 
     def extract_body(env)
