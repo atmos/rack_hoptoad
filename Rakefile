@@ -31,7 +31,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency('rack')
   s.add_dependency('toadhopper', '~>2.0.0')
   s.require_path = 'lib'
-  s.files = %w(LICENSE README.md Rakefile TODO) + Dir.glob("{lib,specs}/**/*")
+  s.files = %w(LICENSE README.md Rakefile TODO) + Dir.glob("{lib,specs}/**/*.rb") + ["#{GEM}.gemspec"]
 end
 
 Gem::PackageTask.new(spec) do |pkg|

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.description = %q{A gem that provides hoptoad notifications from rack}
   s.email = %q{atmos@atmos.org}
   s.extra_rdoc_files = ["LICENSE", "TODO"]
-  s.files = ["LICENSE", "README.md", "Rakefile", "TODO", "lib/rack", "lib/rack/hoptoad.rb", "lib/rack/hoptoad_version.rb", "lib/rack/hoptoad_version.rb~"]
+  s.files = ["LICENSE", "README.md", "Rakefile", "TODO", "lib/rack/hoptoad.rb", "lib/rack/hoptoad_version.rb", "rack_hoptoad.gemspec"]
   s.homepage = %q{http://github.com/atmos/rack_hoptoad}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.0}
