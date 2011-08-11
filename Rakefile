@@ -35,7 +35,6 @@ spec = Gem::Specification.new do |s|
 end
 
 Gem::PackageTask.new(spec) do |pkg|
-  pkg.gem_spec = spec
 end
 
 desc "create a gemspec file"
