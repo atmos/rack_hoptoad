@@ -1,7 +1,7 @@
 rack_hoptoad
 ============
 
-A gem that provides exception notifications to [hoptoad](http://hoptoadapp.com) as rack middleware.
+A gem that provides exception notifications to [hoptoad](http://hoptoadapp.com)/[airbrake](http://airbrakeapp.com) as rack middleware.
 
 Usage
 =====
