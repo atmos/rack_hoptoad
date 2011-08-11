@@ -1,9 +1,6 @@
 source :gemcutter
 
-group :runtime do
-  gem 'rack'
-  gem 'toadhopper', '~>2.0.0'
-end
+gemspec
 
 group :test do
   gem 'rake'
