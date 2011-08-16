@@ -1,13 +1,13 @@
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
 require 'rubygems/specification'
-require 'spec/rake/spectask'
+require 'rspec/core/rake_task'
 require 'date'
 require 'bundler'
 
 Bundler.setup(:runtime, :test)
 Bundler.require(:runtime, :test)
 
-require 'lib/rack/hoptoad'
+require 'lib/rack/hoptoad_version'
 
 GEM = "rack_hoptoad"
 GEM_VERSION = Rack::Hoptoad::VERSION
@@ -28,17 +28,13 @@ spec = Gem::Specification.new do |s|
   s.email            = EMAIL
   s.homepage         = HOMEPAGE
 
-  bundle = Bundler::Definition.from_gemfile("Gemfile")
-  bundle.dependencies.
-    select { |d| d.groups.include?(:runtime) }.
-    each   { |d| s.add_dependency(d.name, d.version_requirements.to_s)  }
-
+  s.add_dependency('rack')
+  s.add_dependency('toadhopper', '~>2.0.0')
   s.require_path = 'lib'
-  s.files = %w(LICENSE README.md Rakefile TODO) + Dir.glob("{lib,specs}/**/*")
+  s.files = %w(LICENSE README.md Rakefile TODO) + Dir.glob("{lib,specs}/**/*.rb") + ["#{GEM}.gemspec"]
 end
 
-Rake::GemPackageTask.new(spec) do |pkg|
-  pkg.gem_spec = spec
+Gem::PackageTask.new(spec) do |pkg|
 end
 
 desc "create a gemspec file"
@@ -52,11 +48,11 @@ task :default => 'rack_hoptoad:spec'
 
 namespace :rack_hoptoad do
   desc "Run unit specifications"
-  Spec::Rake::SpecTask.new(:spec) do |t|
-    t.spec_opts << %w(-fs --color)
-    t.spec_opts << '--loadby' << 'random'
-    t.spec_files = Dir["spec/*_spec.rb"]
+  RSpec::Core::RakeTask.new(:spec) do |t|
+    t.rspec_opts = %w(-fs --color)
+    t.pattern = "spec/*_spec.rb"
 
+    t.rcov_opts = []
     t.rcov_opts << '--exclude' << 'spec,.bundle,.rvm'
     t.rcov = ENV.has_key?('NO_RCOV') ? ENV['NO_RCOV'] != 'true' : true
     t.rcov_opts << '--text-summary'

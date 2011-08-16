@@ -1,18 +1,15 @@
 source :gemcutter
 
-group :runtime do
-  gem 'rack'
-  gem 'toadhopper', '~>1.0.1'
-end
+gemspec
 
 group :test do
   gem 'rake'
-  gem 'rspec',      :require => 'spec'
+  gem 'rspec'
   if RUBY_VERSION =~ /^1\.9/
     gem 'ruby-debug19'
   else
     gem 'ruby-debug'
   end
   gem 'rcov'
-  gem 'bundler',   '~>0.9.12'
+  gem 'bundler',   '>= 1.0.0'
 end

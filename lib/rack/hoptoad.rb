@@ -1,3 +1,5 @@
+require 'rack/hoptoad_version'
+
 require 'rack'
 require 'erb'
 require 'toadhopper'
@@ -6,8 +8,6 @@ module Rack
   # Catches all exceptions raised from the app it wraps and
   # posts the results to hoptoad.
   class Hoptoad
-    VERSION = '0.1.6'
-
     class Error < StandardError; end
 
     attr_accessor :api_key, :environment_filters, :report_under, :rack_environment, :notifier_class, :failsafe
